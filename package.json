@@ -1,0 +1,35 @@
+{
+  "name": "libsodium-prebuilt",
+  "version": "1.0.16",
+  "description": "libsodium prebuilt as a shared library and NAN module",
+  "main": "index.js",
+  "dependencies": {
+    "ini": "^1.3.5",
+    "nan": "^2.4.0",
+    "node-gyp-build": "^3.0.0"
+  },
+  "devDependencies": {
+    "fs-extra": "^5.0.0",
+    "node-gyp": "^3.6.1",
+    "prebuildify": "^2.3.3"
+  },
+  "scripts": {
+    "test": "node test.js",
+    "dev": "node-gyp rebuild",
+    "clean": "rm -rf libsodium.build build",
+    "fetch-libsodium": "git submodule update --recursive --init",
+    "install": "node-gyp-build \"node preinstall.js\" \"node postinstall.js\"",
+    "prebuild": "prebuildify -a --strip --preinstall \"node preinstall.js\" --postinstall \"node postinstall.js\"",
+    "prebuild-ia32": "prebuildify -a --strip --preinstall \"node preinstall.js\" --postinstall \"node postinstall.js\" --arch=ia32"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emilbayes/libsodium-prebuilts.git"
+  },
+  "author": "Emil Bay <github@tixz.dk> (http://bayes.dk)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emilbayes/libsodium-prebuilts/issues"
+  },
+  "homepage": "https://github.com/emilbayes/libsodium-prebuilts"
+}
