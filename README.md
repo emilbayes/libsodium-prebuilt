@@ -11,6 +11,18 @@ npm install libsodium-prebuilts
 
 ### :warning: This module does *not* follow semver, but `libsodium`s versioning scheme :warning:
 
+## Usage
+
+```js
+require('libsodium-prebuild') // will load symbols
+// Load your native module which depends on libsodium-prebuilt
+
+```
+
+```sh
+node -p 'require("libsodium-prebuilt/include")'
+```
+
 ## Contributing
 
 ```sh
