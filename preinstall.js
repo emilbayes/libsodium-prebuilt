@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var fs = require('fs')
+var fse = require('fs-extra')
 var os = require('os')
 var proc = require('child_process')
 var path = require('path')
@@ -32,7 +33,7 @@ if (process.argv.indexOf('--print-lib') > -1) {
       console.log(path.join(buildDir, 'lib/libsodium.so'))
       break
     case 'win32':
-      console.log('../libsodium/Build/ReleaseDLL/' + warch + '/libsodium.lib')
+      console.log(path.join(buildDir, 'libsodium.lib'))
       break
     default:
       process.exit(1)
@@ -60,27 +61,34 @@ switch (os.platform()) {
 }
 
 function buildWindows () {
-  var res = path.join(__dirname, 'lib/libsodium-' + arch + '.dll')
-  if (fs.existsSync(res)) return
+  if (fs.existsSync(buildDir)) return
 
-  spawn('.\\msvc-scripts\\process.bat', [], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
+  spawn(path.join('.', 'msvc-scripts', 'process.bat'), [], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
     if (err) throw err
-    var msbuild = path.resolve('/', 'Program Files (x86)', 'MSBuild/14.0/Bin/MSBuild.exe')
-    var args = ['/p:Configuration=ReleaseDLL;Platform=' + warch + ';OutputPath=' + buildDir, '/nologo']
+    var msbuild = path.resolve('/', 'Program Files (x86)', 'MSBuild', '14.0', 'Bin', 'MSBuild.exe')
+    var args = ['/p:Configuration=ReleaseDLL;Platform=' + warch, '/nologo']
     spawn(msbuild, args, {cwd: sourceDir, stdio: 'inherit'}, function (err) {
       if (err) throw err
 
-      var dll = path.join(sourceDir, 'Build/ReleaseDLL/' + warch + '/libsodium.dll')
-
-      fs.rename(dll, res, function (err) {
+      fse.copy(path.join(sourceDir, 'src', 'libsodium', 'include'), path.join(buildDir, 'include'), function (err) {
         if (err) throw err
+
+        var dll = path.join(sourceDir, 'Build', 'ReleaseDLL',  warch, 'libsodium.dll')
+        fs.rename(dll, path.join(buildDir, 'libsodium.dll'), function (err) {
+          if (err) throw err
+
+          var lib = path.join(sourceDir, 'Build', 'ReleaseDLL', warch, 'libsodium.lib')
+          fs.rename(lib, path.join(buildDir, 'libsodium.lib'), function (err) {
+            if (err) throw err
+          })
+        })
       })
     })
   })
 }
 
 function buildUnix (ext, cb) {
-  var res = path.join(buildDir, '/libsodium.' + ext)
+  if (fs.existsSync(buildDir)) return
 
   spawn('./configure', ['--prefix=' + buildDir], {cwd: __dirname, stdio: 'inherit'}, function (err) {
     if (err) throw err

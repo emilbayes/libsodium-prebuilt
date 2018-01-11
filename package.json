@@ -11,7 +11,7 @@
   "devDependencies": {
     "fs-extra": "^5.0.0",
     "node-gyp": "^3.6.1",
-    "prebuildify": "^2.3.3"
+    "prebuildify": "^2.5.0"
   },
   "scripts": {
     "test": "node test.js",
@@ -19,8 +19,8 @@
     "clean": "rm -rf libsodium.build build",
     "fetch-libsodium": "git submodule update --recursive --init",
     "install": "node-gyp-build \"node preinstall.js\" \"node postinstall.js\"",
-    "prebuild": "prebuildify -a --strip --preinstall \"node preinstall.js\" --postinstall \"node postinstall.js\"",
-    "prebuild-ia32": "prebuildify -a --strip --preinstall \"node preinstall.js\" --postinstall \"node postinstall.js\" --arch=ia32"
+    "prebuild": "prebuildify -a --strip --preinstall \"node preinstall.js\" --postinstall \"node postinstall.js\" --artifacts=libsodium.build",
+    "prebuild-ia32": "prebuildify -a --strip --preinstall \"node preinstall.js\" --postinstall \"node postinstall.js\" --arch=ia32 --artifacts=libsodium.build"
   },
   "repository": {
     "type": "git",

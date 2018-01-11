@@ -28,7 +28,7 @@
       'conditions': [
         ['OS != "mac" and OS != "win"', {
           'link_settings': {
-            'libraries': [ "-Wl,-rpath=\\$$ORIGIN"]
+            'libraries': [ "-Wl,-rpath=\\$$ORIGIN/lib"]
           }
         }],
       ],
