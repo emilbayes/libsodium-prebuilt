@@ -92,7 +92,7 @@ function buildUnix (ext, cb) {
 
   spawn('./configure', ['--prefix=' + buildDir], {cwd: __dirname, stdio: 'inherit'}, function (err) {
     if (err) throw err
-    spawn('make', ['install'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
+    spawn('make', ['clean'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
       if (err) throw err
       spawn('make', ['install'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
         if (err) throw err
