@@ -96,6 +96,10 @@ function buildUnix (ext, cb) {
       if (err) throw err
       spawn('make', ['install'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
         if (err) throw err
+
+        strip(path.join(buildDir, 'lib/libsodium.' + ext), function (err) {
+          if (err) throw err
+        })
       })
     })
   })
@@ -107,4 +111,18 @@ function spawn (cmd, args, opts, cb) {
     if (code) return cb(new Error(cmd + ' exited with ' + code))
     cb(null)
   })
+}
+
+function strip (file, cb) {
+  var args = file.endsWith('.dylib') ? [file, '-Sx'] : [file, '--strip-all']
+  var child = proc.spawn('strip', args, {stdio: 'ignore'})
+
+  child.on('exit', function (code) {
+    if (code) return cb(spawnError('strip', code))
+    cb()
+  })
+}
+
+function spawnError (name, code) {
+  return new Error(name + ' exited with ' + code)
 }
