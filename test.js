@@ -1,4 +1,3 @@
-var sodium = require('.')
+require('.') // can we load the native dep
 
-if (sodium.path == null) throw new Error('Missing .path')
-if (sodium.include == null) throw new Error('Missing .include')
+if (require('./include') == null) throw new Error('Missing .include')
