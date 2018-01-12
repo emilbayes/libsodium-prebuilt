@@ -22,7 +22,7 @@ require('libsodium-prebuild') // will load symbols
 Get platform resolved base path to compiled dependencies:
 
 ```sh
-node -p 'require("libsodium-prebuilt/paths").include'
+node -p 'require("libsodium-prebuilt/paths").prefix'
 ```
 
 Get path to `include` directory, eg. for including headers:
