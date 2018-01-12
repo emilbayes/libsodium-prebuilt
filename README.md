@@ -43,6 +43,47 @@ Get path to `libsodium.lib` file for linking on windows:
 node -p 'require("libsodium-prebuilt/paths").win32lib'
 ```
 
+## Example GYP file
+
+```python
+{
+    'variables': {
+        'target_arch%': '<!(node -p "os.arch()")>'
+    },
+    'targets': [{
+        'target_name': 'project_name',
+        'include_dirs': [
+          '<!(node -e "require(\'nan\')")',
+          '<!(node -p "require(\'libsodium-prebuilt/paths\').include")'
+        ],
+        'sources': [
+            # Source files (.c, .cc, .cpp, etc.)
+        ],
+        'xcode_settings': {
+            'OTHER_CFLAGS': ['-g', '-O3']
+        },
+        'cflags': ['-g', '-O3'],
+        'conditions': [
+            ['OS == "win"', {
+                'link_settings': {
+                    'libraries': [
+                        '<!(node -p "require(\'libsodium-prebuilt/paths\').win32lib")',
+                    ]
+                }
+            }],
+            ['OS == "linux"', {
+                'link_settings': {
+                    'libraries': [
+                        '-L<!(node -p \'require("libsodium-prebuilt/paths").lib\')',
+                        '-lsodium',
+                    ]
+                }
+            }]
+        ],
+    }]
+}
+```
+
 ## Contributing
 
 ```sh
