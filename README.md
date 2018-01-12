@@ -19,8 +19,28 @@ require('libsodium-prebuild') // will load symbols
 
 ```
 
+Get platform resolved base path to compiled dependencies:
+
 ```sh
-node -p 'require("libsodium-prebuilt/include")'
+node -p 'require("libsodium-prebuilt/paths").include'
+```
+
+Get path to `include` directory, eg. for including headers:
+
+```sh
+node -p 'require("libsodium-prebuilt/paths").include'
+```
+
+Get path to `lib` directory, eg. for linking to `.dylib` or `.so` files:
+
+```sh
+node -p 'require("libsodium-prebuilt/paths").lib'
+```
+
+Get path to `libsodium.lib` file for linking on windows:
+
+```sh
+node -p 'require("libsodium-prebuilt/paths").win32lib'
 ```
 
 ## Contributing
