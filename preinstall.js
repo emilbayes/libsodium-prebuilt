@@ -6,6 +6,7 @@ var os = require('os')
 var proc = require('child_process')
 var path = require('path')
 var ini = require('ini')
+var version = require('./package.json').version
 
 var sourceDir = path.join(__dirname, 'libsodium')
 var buildDir = path.join(__dirname, 'libsodium.build')
@@ -33,7 +34,7 @@ if (process.argv.indexOf('--print-lib') > -1) {
       console.log(path.join(buildDir, 'lib/libsodium.so'))
       break
     case 'win32':
-      console.log(path.join(buildDir, 'libsodium.lib'))
+      console.log(path.join(buildDir, ['libsodium', version, 'lib'].join('.')))
       break
     default:
       process.exit(1)
@@ -74,11 +75,13 @@ function buildWindows () {
         if (err) throw err
 
         var dll = path.join(sourceDir, 'Build', 'ReleaseDLL',  warch, 'libsodium.dll')
-        fs.rename(dll, path.join(buildDir, 'libsodium.dll'), function (err) {
+        var buildDll = path.join(buildDir, 'libsodium.dll')
+
+        fs.rename(dll, buildDll, function (err) {
           if (err) throw err
 
-          var lib = path.join(sourceDir, 'Build', 'ReleaseDLL', warch, 'libsodium.lib')
-          fs.rename(lib, path.join(buildDir, 'libsodium.lib'), function (err) {
+          var versionedDll = path.join(buildDir, ['libsodium', version, 'dll'].join('.'))
+          spawn('node', [require.resolve('rename-dll'), buildDll, versionedDll], {}, function (err) {
             if (err) throw err
           })
         })
