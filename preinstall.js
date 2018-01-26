@@ -75,15 +75,10 @@ function buildWindows () {
         if (err) throw err
 
         var dll = path.join(sourceDir, 'Build', 'ReleaseDLL',  warch, 'libsodium.dll')
-        var buildDll = path.join(buildDir, 'libsodium.dll')
 
-        fs.rename(dll, buildDll, function (err) {
+        var versionedDll = path.join(buildDir, ['libsodium', version, 'dll'].join('.'))
+        spawn('node', [require.resolve('rename-dll'), dll, versionedDll], {}, function (err) {
           if (err) throw err
-
-          var versionedDll = path.join(buildDir, ['libsodium', version, 'dll'].join('.'))
-          spawn('node', [require.resolve('rename-dll'), buildDll, versionedDll], {}, function (err) {
-            if (err) throw err
-          })
         })
       })
     })
