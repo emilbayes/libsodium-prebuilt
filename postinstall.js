@@ -44,7 +44,7 @@ function buildDarwin () {
   var lib = path.join(la.libdir, la.dlname)
   proc.exec('install_name_tool -id "@loader_path/lib/libsodium.dylib" lib/libsodium.dylib', {cwd: artifactsDir}, function (err) {
     if (err) throw err
-    proc.exec('install_name_tool -change "' + lib + '" "@loader_path/lib/libsodium.dylib" ' + path.join(buildDir, 'libsodium.node'), {cwd: artifactsDir}, function (err) {
+    proc.exec('install_name_tool -change "' + lib + '" "@loader_path/lib/libsodium.dylib" ' + path.join(buildDir, 'libsodium-prebuilt.node'), {cwd: artifactsDir}, function (err) {
       if (err) throw err
 
       copy(artifactsDir, buildDir, function (err) {
