@@ -4,7 +4,7 @@
   },
   'targets': [
     {
-      'target_name': 'liblibsodium',
+      'target_name': 'libsodium-prebuilt',
       'include_dirs' : [
         "<!(node -e \"require('nan')\")",
         'libsodium.build/include'
@@ -31,6 +31,9 @@
             'libraries': [ "-Wl,-rpath=\\$$ORIGIN/lib"]
           }
         }],
+        ['OS != "win"', {
+            'product_prefix': 'lib'
+        }]
       ],
     }
   ]
