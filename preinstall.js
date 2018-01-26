@@ -77,7 +77,7 @@ function buildWindows () {
         var dll = path.join(sourceDir, 'Build', 'ReleaseDLL',  warch, 'libsodium.dll')
 
         var versionedDll = path.join(buildDir, ['libsodium', version, 'dll'].join('.'))
-        spawn('rename-dll.cmd', [dll, versionedDll], {stdio: 'inherit'}, function (err) {
+        spawn('rename-dll.cmd', [dll, versionedDll, '--arch=' + arch], {stdio: 'inherit'}, function (err) {
           if (err) throw err
         })
       })
