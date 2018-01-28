@@ -38,5 +38,7 @@ deploy:
     artifact: /.*\.zip/
     draft: false
     prerelease: true
+    auth_token:
+      secure: eW9UF3UNoIwdfhouoXsJkGy9++UEdNct2ARHCJ6xHDQ3B11j1PpObCd6kupuYUK2
     on:
       appveyor_repo_tag: true
