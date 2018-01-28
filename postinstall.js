@@ -42,9 +42,10 @@ function buildUnix () {
 function buildDarwin () {
   var la = ini.decode(fs.readFileSync(path.join(artifactsDir, 'lib/libsodium.la')).toString())
   var lib = path.join(la.libdir, la.dlname)
+  var nativeNode = path.join(buildDir, 'libsodium-prebuilt.node')
   proc.exec('install_name_tool -id "@loader_path/lib/libsodium.dylib" lib/libsodium.dylib', {cwd: artifactsDir}, function (err) {
     if (err) throw err
-    proc.exec('install_name_tool -change "' + lib + '" "@loader_path/lib/libsodium.dylib" ' + path.join(buildDir, 'libsodium-prebuilt.node'), {cwd: artifactsDir}, function (err) {
+    proc.exec(`install_name_tool -change "${lib}" "@loader_path/lib/libsodium.dylib" ${nativeNode}`, {cwd: artifactsDir}, function (err) {
       if (err) throw err
 
       copy(artifactsDir, buildDir, function (err) {
