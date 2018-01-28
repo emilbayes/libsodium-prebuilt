@@ -50,6 +50,12 @@ Get path to the `.lib` file for linking on Windows:
 node -p 'require("libsodium-prebuilt/paths").win32lib'
 ```
 
+Get path to the versioned `.dll` file for linking on Windows:
+
+```sh
+node -p 'require("libsodium-prebuilt/paths").win32dll'
+```
+
 ## Example GYP file
 
 ```python
