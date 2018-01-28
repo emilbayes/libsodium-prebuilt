@@ -9,7 +9,14 @@ npm install libsodium-prebuilts
 [![build status](https://travis-ci.org/emilbayes/libsodium-prebuilt.svg?branch=master)](https://travis-ci.org/emilbayes/libsodium-prebuilt)
 [![Build status](https://ci.appveyor.com/api/projects/status/g3xipfalgq6k9lrw/branch/master?svg=true)](https://ci.appveyor.com/project/emilbayes/libsodium-prebuilt/branch/master)
 
-### :warning: This module does *not* follow semver, but `libsodium`s versioning scheme :warning:
+## Versions
+
+This module will track libsodium versions, but may also increment versions if
+there are changes to the build process the downstream modules depend on.
+
+| `libsodium-prebuilt` | `libsodium`     |
+|:---------------------|:----------------|
+| 1.0.0                | 1.0.16 / 24.0.1 |
 
 ## Usage
 
@@ -37,7 +44,7 @@ Get path to `lib` directory, eg. for linking to `.dylib` or `.so` files:
 node -p 'require("libsodium-prebuilt/paths").lib'
 ```
 
-Get path to `libsodium.lib` file for linking on windows:
+Get path to the `.lib` file for linking on Windows:
 
 ```sh
 node -p 'require("libsodium-prebuilt/paths").win32lib'
