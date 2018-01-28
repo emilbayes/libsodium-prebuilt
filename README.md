@@ -76,12 +76,26 @@ node -p 'require("libsodium-prebuilt/paths").win32lib'
                     'libraries': [
                         '<!(node -p "require(\'libsodium-prebuilt/paths\').win32lib")',
                     ]
-                }
+                },
+                'msvs_settings': {
+                    'VCLinkerTool': {
+                        'DelayLoadDLLs': ['<!(node -p "require(\'libsodium-prebuilt/paths\').win32dll")']
+                    }
+                },
+            }],
+            ['OS == "mac"', {
+              'link_settings': {
+                  'libraries': [
+                      '-L<!(node -p "require(\'libsodium-prebuilt/paths\').lib")',
+                      '-lazy-lsodium',
+                  ]
+              }
             }],
             ['OS == "linux"', {
                 'link_settings': {
                     'libraries': [
                         '-L<!(node -p \'require("libsodium-prebuilt/paths").lib\')',
+                        '-z lazy',
                         '-lsodium',
                     ]
                 }
