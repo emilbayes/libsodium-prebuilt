@@ -57,7 +57,6 @@ function buildDarwin () {
 
 function copy (a, b, cb) {
   fse.copy(a, b, {
-    preserveTimestamps: true,
     filter: function (filePath) {
       if (filePath.endsWith(path.sep + 'lib')) return true
       if (filePath.endsWith(path.sep + 'include')) return true
