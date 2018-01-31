@@ -9,7 +9,7 @@ var ini = require('ini')
 var version = require('./package.json').version
 
 var sourceDir = path.join(__dirname, 'libsodium')
-var buildDir = path.join(__dirname, 'libsodium.build')
+var artifactsDir = path.join(__dirname, 'libsodium.build')
 var arch = process.env.PREBUILD_ARCH || os.arch()
 
 if (process.argv.indexOf('--arch') > -1) {
@@ -26,15 +26,15 @@ if (process.argv.indexOf('--print-arch') > -1) {
 if (process.argv.indexOf('--print-lib') > -1) {
   switch (os.platform()) {
     case 'darwin':
-      console.log(path.join(buildDir, 'lib/libsodium.dylib'))
-      break
     case 'openbsd':
     case 'freebsd':
     case 'linux':
-      console.log(path.join(buildDir, 'lib/libsodium.so'))
+      var la = ini.decode(fs.readFileSync(path.join(artifactsDir, 'lib/libsodium.la')).toString())
+      var dylibPath = path.join(la.libdir, la.dlname)
+      console.log(dylibPath)
       break
     case 'win32':
-      console.log(path.join(buildDir, ['libsodium', version, 'lib'].join('.')))
+      console.log(path.join(artifactsDir, ['libsodium', version, 'lib'].join('.')))
       break
     default:
       process.exit(1)
@@ -62,7 +62,7 @@ switch (os.platform()) {
 }
 
 function buildWindows () {
-  if (fs.existsSync(buildDir)) return
+  if (fs.existsSync(artifactsDir)) return
 
   spawn(path.join('.', 'msvc-scripts', 'process.bat'), [], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
     if (err) throw err
@@ -71,12 +71,12 @@ function buildWindows () {
     spawn(msbuild, args, {cwd: sourceDir, stdio: 'inherit'}, function (err) {
       if (err) throw err
 
-      fse.copy(path.join(sourceDir, 'src', 'libsodium', 'include'), path.join(buildDir, 'include'), function (err) {
+      fse.copy(path.join(sourceDir, 'src', 'libsodium', 'include'), path.join(artifactsDir, 'include'), function (err) {
         if (err) throw err
 
         var dll = path.join(sourceDir, 'Build', 'ReleaseDLL',  warch, 'libsodium.dll')
 
-        var versionedDll = path.join(buildDir, ['libsodium', version, 'dll'].join('.'))
+        var versionedDll = path.join(artifactsDir, ['libsodium', version, 'dll'].join('.'))
         spawn('rename-dll.cmd', [dll, versionedDll, '--arch=' + arch], {stdio: 'inherit'}, function (err) {
           if (err) throw err
         })
@@ -86,16 +86,16 @@ function buildWindows () {
 }
 
 function buildUnix (ext, cb) {
-  if (fs.existsSync(buildDir)) return
+  if (fs.existsSync(artifactsDir)) return
 
-  spawn('./configure', ['--prefix=' + buildDir], {cwd: __dirname, stdio: 'inherit'}, function (err) {
+  spawn('./configure', ['--prefix=' + artifactsDir], {cwd: __dirname, stdio: 'inherit'}, function (err) {
     if (err) throw err
     spawn('make', ['clean'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
       if (err) throw err
       spawn('make', ['install'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
         if (err) throw err
 
-        strip(path.join(buildDir, 'lib/libsodium.' + ext), function (err) {
+        strip(path.join(artifactsDir, 'lib/libsodium.' + ext), function (err) {
           if (err) throw err
         })
       })

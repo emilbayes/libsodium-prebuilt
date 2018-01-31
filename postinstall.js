@@ -34,22 +34,33 @@ function buildWindows () {
 }
 
 function buildUnix () {
+  var la = ini.decode(fs.readFileSync(path.join(artifactsDir, 'lib/libsodium.la')).toString())
+  var dylibPath = path.join(la.libdir, la.dlname)
+
   copy(artifactsDir, buildDir, function (err) {
     if (err) throw err
+    renameSharedLib('so', function (err) {
+      if (err) throw err
+    })
   })
 }
 
 function buildDarwin () {
   var la = ini.decode(fs.readFileSync(path.join(artifactsDir, 'lib/libsodium.la')).toString())
-  var lib = path.join(la.libdir, la.dlname)
-  var nativeNode = path.join(buildDir, 'libsodium-prebuilt.node')
-  proc.exec('install_name_tool -id "@loader_path/lib/libsodium.dylib" lib/libsodium.dylib', {cwd: artifactsDir}, function (err) {
+  var dylibPath = path.join(la.libdir, la.dlname)
+  var libsodiumDylib = la.dlname
+  var nodeSharedLib = path.join(buildDir, 'libsodium-prebuilt.node')
+
+  proc.exec(`install_name_tool -id "@loader_path/lib/${libsodiumDylib}" lib/${libsodiumDylib}`, {cwd: artifactsDir}, function (err) {
     if (err) throw err
-    proc.exec(`install_name_tool -change "${lib}" "@loader_path/lib/libsodium.dylib" ${nativeNode}`, {cwd: artifactsDir}, function (err) {
+    proc.exec(`install_name_tool -change "${dylibPath}" "@loader_path/lib/${libsodiumDylib}" ${nodeSharedLib}`, {cwd: artifactsDir}, function (err) {
       if (err) throw err
 
       copy(artifactsDir, buildDir, function (err) {
         if (err) throw err
+        renameSharedLib('dylib', function (err) {
+          if (err) throw err
+        })
       })
     })
   })
@@ -62,9 +73,7 @@ function copy (a, b, cb) {
       if (filePath.endsWith(path.sep + 'include')) return true
       if (filePath.endsWith(path.sep + 'sodium')) return true
       if (filePath.endsWith(path.sep + 'libsodium.build')) return true
-      if (/\.so(\.\d+)*/i.test(filePath)) return true
       if (filePath.endsWith('.h')) return true
-      if (filePath.endsWith('.la')) return true
       if (filePath.endsWith('.dylib')) return true
       if (filePath.endsWith('.dll')) return true
       if (filePath.endsWith('.lib')) return true
@@ -72,4 +81,11 @@ function copy (a, b, cb) {
       return false
     }
   }, cb)
+}
+
+function renameSharedLib (ext, cb) {
+  var la = ini.decode(fs.readFileSync(path.join(artifactsDir, 'lib/libsodium.la')).toString())
+  var dest = path.join(buildDir, 'lib', la.dlname)
+  var src = fs.realpathSync(path.join(artifactsDir, 'lib/libsodium.' + ext))
+  fse.copy(src, dest, cb)
 }
