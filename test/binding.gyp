@@ -4,9 +4,8 @@
     },
     'targets': [{
         'target_name': 'libsodium-prebuilt-test',
-        'include_dirs': [
+        'include_dirs+': [ # Avoid duplicate key by using the prepend option
           '<!(node -e "require(\'nan\')")',
-          '<!(node -p "require(\'../paths\').include")'
         ],
         'sources': [
             'binding.cc'
@@ -15,6 +14,12 @@
             'OTHER_CFLAGS': ['-g', '-O3']
         },
         'cflags': ['-g', '-O3'],
+
+
+        # Below are the settings that you include in dependent projects (replacing .. with libsodium-prebuild)
+        'include_dirs': [
+            '<!(node -p "require(\'../paths\').include")'
+        ],
         'conditions': [
             ['OS == "win"', {
                 'link_settings': {
@@ -41,7 +46,7 @@
                     'libraries': [
                         '-L<!(node -p \'require("../paths").lib\')',
                         '-z lazy',
-                        '-lsodium',
+                        '-l:<!(node -p \'require("../paths").soname\')',
                     ]
                 }
             }]

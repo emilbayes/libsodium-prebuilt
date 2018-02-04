@@ -15,7 +15,7 @@
     "prebuildify": "^2.5.0"
   },
   "scripts": {
-    "test": "node test.js && cd test && node-gyp rebuild && node test.js",
+    "test": "node test.js && cd test && node-gyp rebuild --verbose && node test.js",
     "dev": "node-gyp rebuild",
     "clean": "rm -rf libsodium.build build",
     "fetch-libsodium": "git submodule update --recursive --init",

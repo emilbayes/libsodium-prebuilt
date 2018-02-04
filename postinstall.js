@@ -73,6 +73,7 @@ function copy (a, b, cb) {
       if (filePath.endsWith(path.sep + 'include')) return true
       if (filePath.endsWith(path.sep + 'sodium')) return true
       if (filePath.endsWith(path.sep + 'libsodium.build')) return true
+      if (filePath.endsWith('.la')) return true
       if (filePath.endsWith('.h')) return true
       if (filePath.endsWith('.dylib')) return true
       if (filePath.endsWith('.dll')) return true
