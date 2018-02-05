@@ -1,6 +1,6 @@
 {
   "name": "libsodium-prebuilt",
-  "version": "1.0.0",
+  "version": "1.0.1-0",
   "description": "libsodium prebuilt as a shared library and NAN module",
   "main": "index.js",
   "dependencies": {
