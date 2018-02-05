@@ -10,7 +10,7 @@ exports.lib = path.resolve(exports.prefix, 'lib')
 
 try {
   exports.soname = ini.decode(fs.readFileSync(path.join(exports.lib, 'libsodium.la'), 'utf8')).dlname
-} catch (_) { console.error(_) }
+} catch (_) {}
 
 exports.win32lib = path.resolve(exports.prefix, ['libsodium', version, 'lib'].join('.'))
 exports.win32dll = path.resolve(exports.prefix, ['libsodium', version, 'dll'].join('.'))
