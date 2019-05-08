@@ -1,7 +1,6 @@
 # libsodium-prebuilt
 
 [![build status](https://travis-ci.org/emilbayes/libsodium-prebuilt.svg?branch=master)](https://travis-ci.org/emilbayes/libsodium-prebuilt)
-[![Build status](https://ci.appveyor.com/api/projects/status/g3xipfalgq6k9lrw/branch/master?svg=true)](https://ci.appveyor.com/project/emilbayes/libsodium-prebuilt/branch/master)
 
 [`libsodium`](https://github.com/jedisct1/libsodium) prebuilt as a shared library and NAN module.
 

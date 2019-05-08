@@ -66,7 +66,7 @@ function buildWindows () {
 
   spawn(path.join('.', 'msvc-scripts', 'process.bat'), [], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
     if (err) throw err
-    var msbuild = path.resolve('/', 'Program Files (x86)', 'MSBuild', '14.0', 'Bin', 'MSBuild.exe')
+    var msbuild = findMsBuild()
     var args = ['/p:Configuration=ReleaseDLL;Platform=' + warch, '/nologo']
     spawn(msbuild, args, {cwd: sourceDir, stdio: 'inherit'}, function (err) {
       if (err) throw err
@@ -123,4 +123,37 @@ function strip (file, cb) {
 
 function spawnError (name, code) {
   return new Error(name + ' exited with ' + code)
+}
+
+function findMsBuild () {
+  var possiblePathSuffixes = [
+    '/Microsoft Visual Studio/2017/BuildTools/MSBuild/15.0/Bin/msbuild.exe',
+    '/Microsoft Visual Studio/2017/Enterprise/MSBuild/15.0/Bin/msbuild.exe',
+    '/Microsoft Visual Studio/2017/Professional/MSBuild/15.0/Bin/msbuild.exe',
+    '/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/msbuild.exe',
+    '/MSBuild/14.0/Bin/MSBuild.exe',
+    '/MSBuild/12.0/Bin/MSBuild.exe'
+  ]
+
+  // First try X86 paths (on 64 bit machine which is most likely) then 32 bit
+  var possiblePaths = possiblePathSuffixes
+    .map(p => process.env['PROGRAMFILES(X86)'] + p)
+    .concat(possiblePathSuffixes.map(p => process.env['PROGRAMFILES'] + p))
+
+  possiblePaths.push(process.env.WINDIR + '/Microsoft.NET/Framework/v4.0.30319/MSBuild.exe')
+
+  for (var counter = 0; counter < possiblePaths.length; counter++) {
+    var possiblePath = path.resolve(possiblePaths[counter])
+    try {
+      fs.accessSync(possiblePath)
+      return possiblePath
+    } catch (error) {
+      // Binary not found checking next path
+    }
+  }
+
+  console.error('MSBuild not found')
+  console.error('You can run "npm install --global --production windows-build-tools" to fix this.')
+
+  process.exit(1)
 }
