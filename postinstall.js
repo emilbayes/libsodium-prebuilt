@@ -9,7 +9,6 @@ var release = path.join(__dirname, 'build', 'Release')
 var debug = path.join(__dirname, 'build', 'Debug')
 var artifactsDir = path.join(__dirname, 'libsodium.build')
 var buildDir = fs.existsSync(release) ? release : debug
-var arch = process.env.ARCH || os.arch()
 
 switch (os.platform()) {
   case 'win32':
@@ -34,8 +33,8 @@ function buildWindows () {
 }
 
 function buildUnix () {
-  var la = ini.decode(fs.readFileSync(path.join(artifactsDir, 'lib/libsodium.la')).toString())
-  var dylibPath = path.join(la.libdir, la.dlname)
+  // var la = ini.decode(fs.readFileSync(path.join(artifactsDir, 'lib/libsodium.la')).toString())
+  // var dylibPath = path.join(la.libdir, la.dlname)
 
   copy(artifactsDir, buildDir, function (err) {
     if (err) throw err
@@ -51,9 +50,9 @@ function buildDarwin () {
   var libsodiumDylib = la.dlname
   var nodeSharedLib = path.join(buildDir, 'libsodium-prebuilt.node')
 
-  proc.exec(`install_name_tool -id "@loader_path/lib/${libsodiumDylib}" lib/${libsodiumDylib}`, {cwd: artifactsDir}, function (err) {
+  proc.exec(`install_name_tool -id "@loader_path/lib/${libsodiumDylib}" lib/${libsodiumDylib}`, { cwd: artifactsDir }, function (err) {
     if (err) throw err
-    proc.exec(`install_name_tool -change "${dylibPath}" "@loader_path/lib/${libsodiumDylib}" ${nodeSharedLib}`, {cwd: artifactsDir}, function (err) {
+    proc.exec(`install_name_tool -change "${dylibPath}" "@loader_path/lib/${libsodiumDylib}" ${nodeSharedLib}`, { cwd: artifactsDir }, function (err) {
       if (err) throw err
 
       copy(artifactsDir, buildDir, function (err) {

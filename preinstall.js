@@ -64,20 +64,20 @@ switch (os.platform()) {
 function buildWindows () {
   if (fs.existsSync(artifactsDir)) return
 
-  spawn(path.join('.', 'msvc-scripts', 'process.bat'), [], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
+  spawn(path.join('.', 'msvc-scripts', 'process.bat'), [], { cwd: sourceDir, stdio: 'inherit' }, function (err) {
     if (err) throw err
     var msbuild = findMsBuild()
     var args = ['/p:Configuration=ReleaseDLL;Platform=' + warch, '/nologo']
-    spawn(msbuild, args, {cwd: sourceDir, stdio: 'inherit'}, function (err) {
+    spawn(msbuild, args, { cwd: sourceDir, stdio: 'inherit' }, function (err) {
       if (err) throw err
 
       fse.copy(path.join(sourceDir, 'src', 'libsodium', 'include'), path.join(artifactsDir, 'include'), function (err) {
         if (err) throw err
 
-        var dll = path.join(sourceDir, 'Build', 'ReleaseDLL',  warch, 'libsodium.dll')
+        var dll = path.join(sourceDir, 'Build', 'ReleaseDLL', warch, 'libsodium.dll')
 
         var versionedDll = path.join(artifactsDir, ['libsodium', version, 'dll'].join('.'))
-        spawn('rename-dll.cmd', [dll, versionedDll, '--arch=' + arch], {stdio: 'inherit'}, function (err) {
+        spawn('rename-dll.cmd', [dll, versionedDll, '--arch=' + arch], { stdio: 'inherit' }, function (err) {
           if (err) throw err
         })
       })
@@ -88,11 +88,11 @@ function buildWindows () {
 function buildUnix (ext, cb) {
   if (fs.existsSync(artifactsDir)) return
 
-  spawn('./configure', ['--prefix=' + artifactsDir], {cwd: __dirname, stdio: 'inherit'}, function (err) {
+  spawn('./configure', ['--prefix=' + artifactsDir], { cwd: __dirname, stdio: 'inherit' }, function (err) {
     if (err) throw err
-    spawn('make', ['clean'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
+    spawn('make', ['clean'], { cwd: sourceDir, stdio: 'inherit' }, function (err) {
       if (err) throw err
-      spawn('make', ['install'], {cwd: sourceDir, stdio: 'inherit'}, function (err) {
+      spawn('make', ['install'], { cwd: sourceDir, stdio: 'inherit' }, function (err) {
         if (err) throw err
 
         strip(path.join(artifactsDir, 'lib/libsodium.' + ext), function (err) {
@@ -113,7 +113,7 @@ function spawn (cmd, args, opts, cb) {
 
 function strip (file, cb) {
   var args = file.endsWith('.dylib') ? [file, '-Sx'] : [file, '--strip-all']
-  var child = proc.spawn('strip', args, {stdio: 'ignore'})
+  var child = proc.spawn('strip', args, { stdio: 'ignore' })
 
   child.on('exit', function (code) {
     if (code) return cb(spawnError('strip', code))
